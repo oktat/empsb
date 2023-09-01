@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,10 +34,20 @@ public class EmployeeController {
 	}
 	@CrossOrigin
 	@PostMapping(path="/employees")
-	public Employee store(@RequestBody Employee emp) {
-		Employee res = empRepository.save(emp);
+	public Employee store(@RequestBody Employee emp, @RequestHeader("Authorization") String tokenHeader) {
+		String token = tokenHeader.replace("Bearer ", "");
+		UserController userController = new UserController();
+		Employee res = null;
+		try {
+			userController.checkToken(token);	
+			res = empRepository.save(emp);
+		} catch (Exception e) {
+			System.err.println("Hiba! A token nem jó!");
+		}
 		return res;
 	}
+
+
 	@CrossOrigin
 	@PutMapping("/employees/{id}")
 	public Employee update(@RequestBody Employee emp, @PathVariable Integer id) {
