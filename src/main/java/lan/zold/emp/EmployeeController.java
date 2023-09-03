@@ -75,13 +75,13 @@ public class EmployeeController {
 	@PutMapping("/employees/{id}")
 	public Employee update(@RequestBody Employee emp, @PathVariable Integer id) {
 		
-		Optional<Employee> orig = empRepository.findById(id);
-		if(orig.isPresent()) {
-			Employee emp2 = orig.get();
-			emp2.setName(emp.getName());
-			emp2.setCity(emp.getCity());
-			emp2.setSalary(emp.getSalary());
-			return empRepository.save(emp2);
+		Optional<Employee> storedEmps = empRepository.findById(id);
+		if(storedEmps.isPresent()) {
+			Employee storedEmp = storedEmps.get();
+			storedEmp.setName(emp.getName());
+			storedEmp.setCity(emp.getCity());
+			storedEmp.setSalary(emp.getSalary());
+			return empRepository.save(storedEmp);
 		}else {
 			return emp;
 		}
