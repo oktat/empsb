@@ -22,31 +22,54 @@ public class EmployeeController {
 	@Autowired
 	EmployeeRepository empRepository;
 
+	@Autowired
+	CustomProperties customProperties;
+
+
 	@CrossOrigin
 	@GetMapping("/employees")
 	public @ResponseBody Iterable<Employee> index() {
 		return empRepository.findAll();
 	}
+	
 	@CrossOrigin
 	@GetMapping("/employees/{id}")
 	public @ResponseBody Employee show(@PathVariable Integer id) {
 		return empRepository.findById(id).get();
 	}
+
 	@CrossOrigin
 	@PostMapping(path="/employees")
-	public Employee store(@RequestBody Employee emp, @RequestHeader("Authorization") String tokenHeader) {
-		String token = tokenHeader.replace("Bearer ", "");
-		AuthController userController = new AuthController();
+	public Employee store(
+		@RequestBody Employee emp, 
+		@RequestHeader(
+			value="Authorization", 
+			required=false) 
+			String tokenHeader) {
+		
+		String authOkStr = customProperties.getAuth();
+		boolean authOk = Boolean.parseBoolean(authOkStr);
 		Employee res = null;
-		try {
-			userController.checkToken(token);	
+		if(authOk) {
+			String token = tokenHeader.replace("Bearer ", "");
+			AuthController authController = new AuthController();
+			
+			try {
+				String tokenOk = authController.checkToken(token);
+				if(tokenOk.equals("tokenok")) {
+					res = empRepository.save(emp);
+				}else {
+					String msg = "Hiba! A token nem megfelelő!";
+					throw new IllegalArgumentException(msg);
+				}
+			} catch (Exception e) {
+				System.err.println("Hiba! A token nem jó!");
+			}
+		}else {
 			res = empRepository.save(emp);
-		} catch (Exception e) {
-			System.err.println("Hiba! A token nem jó!");
 		}
 		return res;
 	}
-
 
 	@CrossOrigin
 	@PutMapping("/employees/{id}")

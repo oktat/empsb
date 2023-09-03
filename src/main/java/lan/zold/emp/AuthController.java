@@ -38,12 +38,14 @@ public class AuthController {
         .get();
 
         String reqName = user.getName();
-        
-        boolean passOk = passwordService.checkPass(user.getPassword(), storedUser.getPassword());
+        String reqPass = user.getPassword();
+        String storedPass = storedUser.getPassword();
+        String storedName = storedUser.getName();
 
-        if(storedUser.getName().equals(reqName) && passOk) {
-            String token = getToken(user.getName());
-            return token;
+        boolean passOk = passwordService.checkPass(reqPass, storedPass);
+
+        if(storedName.equals(reqName) && passOk) {
+            return getToken(user.getName());
         }
         return "Hiba! Sikeretlen";
     }
@@ -77,7 +79,7 @@ public class AuthController {
             }
 
             // Token érvényes
-            return "Érvényes token";
+            return "tokenok";
 
         } catch (SignatureException e) {
             // Hibás aláírás esetén
