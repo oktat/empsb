@@ -29,6 +29,11 @@
     <version>2.3.1</version> <!-- Válaszd meg a megfelelő verziót -->
 </dependency>
 
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version> <!-- Változtasd meg a verziót, ha szükséges -->
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

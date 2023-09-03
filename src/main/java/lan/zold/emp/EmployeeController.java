@@ -40,7 +40,7 @@ public class EmployeeController {
 
 	@CrossOrigin
 	@PostMapping(path="/employees")
-	public Employee store(
+	public EmployeeResponse store(
 		@RequestBody Employee emp, 
 		@RequestHeader(
 			value="Authorization", 
@@ -49,7 +49,7 @@ public class EmployeeController {
 		
 		String authOkStr = customProperties.getAuth();
 		boolean authOk = Boolean.parseBoolean(authOkStr);
-		Employee res = null;
+		Employee addedEmp = null;
 		if(authOk) {
 			String token = tokenHeader.replace("Bearer ", "");
 			AuthController authController = new AuthController();
@@ -57,7 +57,7 @@ public class EmployeeController {
 			try {
 				String tokenOk = authController.checkToken(token);
 				if(tokenOk.equals("tokenok")) {
-					res = empRepository.save(emp);
+					addedEmp = empRepository.save(emp);
 				}else {
 					String msg = "Hiba! A token nem megfelelő!";
 					throw new IllegalArgumentException(msg);
@@ -66,8 +66,12 @@ public class EmployeeController {
 				System.err.println("Hiba! A token nem jó!");
 			}
 		}else {
-			res = empRepository.save(emp);
+			addedEmp = empRepository.save(emp);
 		}
+
+		EmployeeResponse res = new EmployeeResponse();
+		res.setEmployee(addedEmp);
+		res.setSuccess("Ok");
 		return res;
 	}
 
@@ -86,6 +90,7 @@ public class EmployeeController {
 			return emp;
 		}
 	}
+	
 	@CrossOrigin
 	@DeleteMapping("/employees/{id}")
 	public Employee delete(@PathVariable Integer id) {
