@@ -36,7 +36,7 @@ public class EmployeeController {
 	@PostMapping(path="/employees")
 	public Employee store(@RequestBody Employee emp, @RequestHeader("Authorization") String tokenHeader) {
 		String token = tokenHeader.replace("Bearer ", "");
-		UserController userController = new UserController();
+		AuthController userController = new AuthController();
 		Employee res = null;
 		try {
 			userController.checkToken(token);	

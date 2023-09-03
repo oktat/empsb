@@ -24,7 +24,7 @@ class EmpApplicationTests {
 	// UserController userController;
 
 	@Autowired
-    private UserController userController;
+    private AuthController userController;
 	
     @LocalServerPort
     private int port;	
